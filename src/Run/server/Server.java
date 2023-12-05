@@ -16,18 +16,17 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
-
-import Run.Core;
 import Run.server.GameLogic.Move;
-
 import javax.swing.JTextArea;
 
 public class Server extends JFrame {
-
     private static final long serialVersionUID = 1L;
     private static List<ClientHandler> clients = new ArrayList<>();
+    private static List<Game> games = new ArrayList<>();
     private JTextArea textArea;
     private JPanel contentPane;
+
+    int countGameRoom = 0;
 
     public static void main(String[] args) {
         Server frame = new Server();
@@ -65,6 +64,25 @@ public class Server extends JFrame {
                 clients.add(clientHandler);
                 Thread clientThread = new Thread(clientHandler);
                 clientThread.start();
+                if (games.size() == 0) {
+                    Game newGame = new Game();
+                    newGame.addPlayer(clientHandler);
+                    games.add(newGame);
+                } else {
+                    boolean isAddition = false;
+                    for (Game game : games) {
+                        if (!game.isFull()) {
+                            game.addPlayer(clientHandler);
+                            isAddition = true;
+                        }
+                    }
+                    if (isAddition == false) {
+                        Game newGame = new Game();
+                        newGame.addPlayer(clientHandler);
+                        games.add(newGame);
+                    }
+                }
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -98,14 +116,18 @@ public class Server extends JFrame {
                                 clientSocket.getPort() + ": " + receivedMessage + "\n");
 
                         // Check if it's a specific text message
-                        if (receivedMessage.equals("CreateRound") && clients.size() == 2) {
-                            for (int index = 0; index < clients.size(); index++) {
-                                ClientHandler client = clients.get(index);
-                                if (index == 0)
-                                    client.sendMessage("UP");
-                                else
-                                    client.sendMessage("DOWN");
+                        if (receivedMessage.equals("CreateRound")) {
+                            for (Game game : games) {
+                                if (game.getPlayer1().clientSocket.getPort() == clientSocket.getPort()
+                                        || game.getPlayer2().clientSocket.getPort() == clientSocket.getPort()) {
+                                    if (game.isFull()) {
+                                        game.getPlayer1().sendMessage("UP");
+                                        game.getPlayer2().sendMessage("DOWN");
+                                    }
+                                    break;
+                                }
                             }
+
                         }
                     } else {
                         // Đọc kích thước dữ liệu từ DataInputStream
@@ -116,9 +138,14 @@ public class Server extends JFrame {
                                 ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
                             Move move = (Move) objectInputStream.readObject();
                             System.out.println("Nhan duoc move tu client " + move.toString());
-                            for (ClientHandler client : clients) {
-                                if (client != this) {
-                                    client.sendMoveForClient(move);
+                            for (Game game : games) {
+                                if (game.getPlayer1().clientSocket.getPort() == clientSocket.getPort()) {
+                                    game.getPlayer2().sendMoveForClient(move);
+                                    break;
+                                }
+                                if (game.getPlayer2().clientSocket.getPort() == clientSocket.getPort()) {
+                                    game.getPlayer1().sendMoveForClient(move);
+                                    break;
                                 }
                             }
 
