@@ -2,16 +2,19 @@ package Run.server.GameLogic.Pieces;
 
 import Run.server.GameLogic.Move;
 
-
 public abstract class Piece {
     protected String type;
     protected boolean canWinAlone;
     protected Side side;
     private boolean captured;
-
+    protected boolean interactive;  
     public Piece(Side side) {
         this.side = side;
         this.captured = false;
+    }
+
+    public boolean isInteractive() {
+        return interactive;
     }
     public void checkPattern(Move move) {
         move.setValid(true);
@@ -20,6 +23,7 @@ public abstract class Piece {
     public Side getSide() {
         return side;
     }
+
     public void Capture() {
         this.captured = true;
     }
@@ -28,6 +32,7 @@ public abstract class Piece {
 
         return this.type;
     }
+
     public String getImageName() {
         String fileName = "";
         if (side == Piece.Side.UP)
@@ -53,9 +58,11 @@ public abstract class Piece {
         fileName += ".png";
         return fileName;
     }
+
     public boolean canWinAlone() {
         return canWinAlone;
     }
+
     public enum Side {
         UP,
         DOWN

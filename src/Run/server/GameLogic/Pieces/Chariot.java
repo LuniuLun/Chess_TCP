@@ -11,6 +11,13 @@ public class Chariot extends Piece{
         super(side);
         this.type = "Chariot";
         this.canWinAlone = true;
+        // Corrected comparison
+        if (side == Side.DOWN) {
+            interactive = true; // Set interactive to true for DOWN side
+        } else {
+            interactive = false; // Set interactive to false for UP side
+        }
+        
     }
 
     @Override

@@ -6,11 +6,17 @@ import Run.server.GameLogic.Move;
  * Guard Piece
  */
 public class Guard extends Piece {
-
     public Guard(Side side) {
         super(side);
         this.type = "Guard";
         this.canWinAlone = false;
+        // Corrected comparison
+        if (side == Side.DOWN) {
+            interactive = true; // Set interactive to true for DOWN side
+        } else {
+            interactive = false; // Set interactive to false for UP side
+        }
+        
     }
 
     @Override

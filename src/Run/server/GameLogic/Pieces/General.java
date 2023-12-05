@@ -11,6 +11,13 @@ public class General extends Piece {
 
         this.type = "General";
         this.canWinAlone = false;
+        // Corrected comparison
+        if (side == Side.DOWN) {
+            interactive = true; // Set interactive to true for DOWN side
+        } else {
+            interactive = false; // Set interactive to false for UP side
+        }
+        
     }
 
     @Override

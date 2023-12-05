@@ -253,6 +253,9 @@ public class BoardPanel extends JPanel {
 					g2.setColor(Color.yellow);
 					g2.drawOval(2, 2, getWidth() - 4, getHeight() - 4);
 				}
+				if (point.getPiece().isInteractive() == false) {
+					setEnabled(false);
+				}
 			}
 		}
 
@@ -267,7 +270,8 @@ public class BoardPanel extends JPanel {
 					g2.setClip(new Ellipse2D.Float(2, 2, getWidth() - 4, getHeight() - 4));
 					g2.drawImage(scaledImage, 0, 0, null);
 					// g2.setClip(null);
-					if (pressed && point.getPiece().equals(board.getPoint(pressLoc[0], pressLoc[1]).getPiece())) {
+					if (pressed && point.getPiece().equals(board.getPoint(pressLoc[0], pressLoc[1]).getPiece())
+							&& point.getPiece().isInteractive() == true) {
 						BasicStroke s = new BasicStroke(3);
 						g2.setStroke(s);
 						g2.setColor(Color.yellow);
@@ -282,7 +286,7 @@ public class BoardPanel extends JPanel {
 		@Override
 		// port,
 		public void mouseClicked(MouseEvent e) {
-			if (!pressed) {
+			if (!pressed && isEnabled()) {
 				if (storePressed()) {
 					pressed = true;
 				}
@@ -296,7 +300,8 @@ public class BoardPanel extends JPanel {
 					if (board.getPoint(pressLoc[0], pressLoc[1]).getPiece() != null &&
 							board.getPoint(releaseLoc[0], releaseLoc[1]).getPiece() != null &&
 							(board.getPoint(pressLoc[0], pressLoc[1]).getPiece().getSide() == board
-									.getPoint(releaseLoc[0], releaseLoc[1]).getPiece().getSide())) {
+									.getPoint(releaseLoc[0], releaseLoc[1]).getPiece().getSide())
+							|| board.getPoint(pressLoc[0], pressLoc[1]).getPiece().isInteractive() == false) {
 						storePressed();
 					} else {
 						pressed = false;
@@ -306,10 +311,6 @@ public class BoardPanel extends JPanel {
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
-						// board.tryMove(new Move(pressLoc[0], pressLoc[1],releaseLoc[0],
-						// releaseLoc[1]));
-						// System.out.println(pressLoc[0] + "," + pressLoc[1] + "," + releaseLoc[0] +
-						// "," + releaseLoc[1]);
 					}
 				}
 			}

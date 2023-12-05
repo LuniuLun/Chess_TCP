@@ -7,12 +7,17 @@ import Run.server.GameLogic.Move;
  */
 public class Soldier extends Piece {
     //private Side curSide;
-
-
     public Soldier(Side side) {
         super(side);
         this.type = "Soldier";
         this.canWinAlone = true;
+        // Corrected comparison
+        if (side == Side.DOWN) {
+            interactive = true; // Set interactive to true for DOWN side
+        } else {
+            interactive = false; // Set interactive to false for UP side
+        }
+        
     }
 
     @Override

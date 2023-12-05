@@ -45,7 +45,7 @@ public class Core {
         board = new Board();
         boardPanel = new BoardPanel(this, socket, direction);
         boardMenu = new BoardMenu(this);
-        timerPanel = new TurnTimerPanel(player1, player2, profile);
+        timerPanel = new TurnTimerPanel(player1, player2, profile, direction);
         boardFrame = new BoardFrame(this);
         counter = 0;
         player1.startTurnTimer(timerPanel);
