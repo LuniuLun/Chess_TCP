@@ -25,7 +25,7 @@ class PreviousMove extends JPanel {
         add(title, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         systemOutput.setCaretPosition(systemOutput.getDocument().getLength());
-        setPreferredSize(new Dimension(260, 150));
+        setPreferredSize(new Dimension(260, 200));
 
 
         //setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
@@ -46,13 +46,14 @@ class PreviousMove extends JPanel {
 }
 
 class StreamIntake extends OutputStream {
+
     private String string = "";
-    private PreviousMove previousMove;
+    private PreviousMove chat;
     private PrintStream system;
 
-    public StreamIntake(PreviousMove previousMove, PrintStream system) {
+    public StreamIntake(PreviousMove chat, PrintStream system) {
         this.system = system;
-        this.previousMove = previousMove;
+        this.chat = chat;
     }
 
     @Override
@@ -60,16 +61,10 @@ class StreamIntake extends OutputStream {
         char c = (char) b;
         String value = Character.toString(c);
         string += value;
-
         if (value.equals("\n")) {
-            if (string.startsWith("Toi:")) {
-                // Message from ChatBox
-                previousMove.appendText(string);
-            } else {
-                // System output
-                system.print(c);
-            }
+            chat.appendText(string);
             string = "";
         }
+        system.print(c);
     }
 }
