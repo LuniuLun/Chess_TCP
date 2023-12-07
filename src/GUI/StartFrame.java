@@ -42,7 +42,7 @@ public class StartFrame extends JFrame {
     private DataInputStream dis;
     private DataOutputStream dos;
     private boolean gameCreated = false; // Thêm biến boolean
-    private ChatBox chatBox; // Add a ChatBox field
+
     public StartFrame(Core core) {
         super("Start Menu");
         this.setLayout(new GridLayout(4, 0));
@@ -234,7 +234,6 @@ public class StartFrame extends JFrame {
             socket = new Socket("localhost", 6969);
             dis = new DataInputStream(socket.getInputStream());
             dos = new DataOutputStream(socket.getOutputStream());
-            chatBox = new ChatBox(socket);
             sendStartGameRequest(profile);
             System.out.println("Gui yeu cau ket noi");
             while (!gameCreated) { // Sửa đổi điều kiện vòng lặp
@@ -272,7 +271,9 @@ public class StartFrame extends JFrame {
                                 }
                             } else {
                                 String message = dis.readUTF();
-                                showReceivedMessage(message);
+                                // showReceivedMessage(message);
+                                // Hiển thị tin nhắn trên ChatBox
+                                core.getChatBox().displayMessage(message);
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -288,7 +289,6 @@ public class StartFrame extends JFrame {
             e.printStackTrace();
         }
     }
-
     private void createBoard(Core core, String direction) throws IOException {
         profile.setMinutes((int) minutes.getValue());
         profile.setP1String(p1Name.getText());
@@ -318,10 +318,6 @@ public class StartFrame extends JFrame {
 
     private void chooseProfile() {
         this.profile = themes[profileSelector.getSelectedIndex()];
-    }
-
-    public void showReceivedMessage(String message) {
-        chatBox.displayMessage(message);
     }
 
     // Preview Panel inner class

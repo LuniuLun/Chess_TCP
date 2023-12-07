@@ -27,6 +27,7 @@ public class Core {
     private static StartFrame startFrame;
     private EndScreen endScreen;
     private Profile profile;
+    private ChatBox chatbox;
 
     public Core() {
         startFrame = new StartFrame(this);
@@ -46,14 +47,19 @@ public class Core {
         boardPanel = new BoardPanel(this, socket, direction);
         boardMenu = new BoardMenu(this);
         timerPanel = new TurnTimerPanel(player1, player2, profile, direction);
-        boardFrame = new BoardFrame(this, socket);
+        chatbox = new ChatBox(socket);
+        boardFrame = new BoardFrame(this, chatbox);
+    
+        // Initialize and set the chatbox visible
+        chatbox.setVisible(true);
+        if(chatbox == null) System.out.println("chưa tao duoc chatbox");
         counter = 0;
         player1.startTurnTimer(timerPanel);
     }
 
     public void playMove(Move move) {
         // System.out.println(counter);
-        
+
         if (counter % 2 == 0) {
             if (board.tryMove3(move, player1)) {
                 // first round
@@ -147,5 +153,7 @@ public class Core {
     public Profile getProfile() {
         return this.profile;
     }
-
+    public ChatBox getChatBox() {
+        return this.chatbox;
+    }
 }

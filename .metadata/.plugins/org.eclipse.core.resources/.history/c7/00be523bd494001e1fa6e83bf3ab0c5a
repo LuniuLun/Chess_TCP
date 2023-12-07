@@ -30,9 +30,6 @@ public class ChatBox extends JPanel {
 	 * 
 	 * @throws IOException
 	 */
-	public ChatBox() {
-		// Initialize your components or perform any other necessary setup here
-	}
 	public ChatBox(Socket socket) throws IOException {
 		this.socket = socket;
 		this.dis = new DataInputStream(socket.getInputStream());
@@ -40,7 +37,7 @@ public class ChatBox extends JPanel {
 		setLayout(null);
 
 		textField = new JTextField();
-		textField.setBounds(10, 154, 137, 25);
+		textField.setBounds(10, 154, 149, 25);
 		add(textField);
 		textField.setColumns(10);
 
@@ -52,7 +49,7 @@ public class ChatBox extends JPanel {
 		scrollPane.setViewportView(textArea);
 
 		JButton btnNewButton = new JButton("Send");
-		btnNewButton.setBounds(157, 154, 74, 25);
+		btnNewButton.setBounds(169, 154, 62, 25);
 		add(btnNewButton);
 		btnNewButton.addActionListener((ActionListener) new ActionListener() {
 			@Override
@@ -63,6 +60,7 @@ public class ChatBox extends JPanel {
 				}
 			}
 		});
+
 		// createReceivedMessageThread();
 		this.setVisible(true);
 	}
@@ -81,7 +79,15 @@ public class ChatBox extends JPanel {
 
 	void displayMessage(String message) {
 		if (message != null) {
-			textArea.append(message + "\n");
+			System.out.println(message); // Remove this line if you don't want to print to console
+
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					textArea.append(message + "\n");
+				}
+			});
 		}
 	}
+
 }

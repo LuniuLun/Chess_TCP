@@ -10,21 +10,18 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.Socket;
 
 public class BoardFrame extends JFrame {
 	private BoardPanel board;
 	private TurnTimerPanel timerPanel;
 	private JPanel sidePanel;
 	private ChatBox chatbox;
-	private Socket socket;
-	public BoardFrame(Core core, Socket socket) throws IOException {
+	public BoardFrame(Core core, ChatBox existingChatBox) throws IOException {
         super("Chinese Chess");
-		this.socket = socket;
         board = core.getBoardPanel();
         timerPanel = core.getTurnTimerPanel();
-        chatbox = new ChatBox(socket); // Khởi tạo ChatBox
-
+        chatbox = existingChatBox; // Khởi tạo ChatBox
+		// chatbox = new ChatBox(socket);
         add(board, BorderLayout.CENTER);
 
         sidePanel = new JPanel();

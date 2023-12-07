@@ -199,7 +199,6 @@ public class Server extends JFrame {
                 byte[] data = byteArrayOutputStream.toByteArray();
 
                 dos.writeBoolean(false);// xac dinh truyen di 1 object
-                        System.out.println("gui false");
                 dos.writeInt(data.length); // Ghi kích thước dữ liệu vào DataOutputStream
                 dos.write(data); // Ghi dữ liệu vào DataOutputStream
 

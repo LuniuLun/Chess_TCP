@@ -19,7 +19,7 @@ class PreviousMove extends JPanel {
 
     public PreviousMove(Core core) {
         JLabel title = new JLabel("Previous moves");
-        systemOutput = new JTextArea(10, 18);
+        systemOutput = new JTextArea(10, 20);
         systemOutput.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(systemOutput, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         add(title, BorderLayout.NORTH);
@@ -48,12 +48,12 @@ class PreviousMove extends JPanel {
 class StreamIntake extends OutputStream {
 
     private String string = "";
-    private PreviousMove chat;
+    private PreviousMove previousMove;
     private PrintStream system;
 
-    public StreamIntake(PreviousMove chat, PrintStream system) {
+    public StreamIntake(PreviousMove previousMove, PrintStream system) {
         this.system = system;
-        this.chat = chat;
+        this.previousMove = previousMove;
     }
 
     @Override
@@ -62,7 +62,7 @@ class StreamIntake extends OutputStream {
         String value = Character.toString(c);
         string += value;
         if (value.equals("\n")) {
-            chat.appendText(string);
+            previousMove.appendText(string);
             string = "";
         }
         system.print(c);
