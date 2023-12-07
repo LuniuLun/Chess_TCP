@@ -8,27 +8,33 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
-
 
 public class BoardFrame extends JFrame {
 	private BoardPanel board;
 	private TurnTimerPanel timerPanel;
 	private JPanel sidePanel;
+	private ChatBox chatbox;
+	private Socket socket;
+	public BoardFrame(Core core, Socket socket) throws IOException {
+        super("Chinese Chess");
+		this.socket = socket;
+        board = core.getBoardPanel();
+        timerPanel = core.getTurnTimerPanel();
+        chatbox = new ChatBox(socket); // Khởi tạo ChatBox
 
-	public BoardFrame(Core core) {
-		super("Chinese Chess");
-		board = core.getBoardPanel();
-		timerPanel = core.getTurnTimerPanel();
-		add(board, BorderLayout.CENTER);
+        add(board, BorderLayout.CENTER);
 
-		sidePanel = new JPanel();
-		sidePanel.setLayout(new GridLayout(2, 0, 0, 3));
-		sidePanel.add(timerPanel);
-        ChatBox chatBox = new ChatBox(core);
-		System.setOut(new PrintStream(new StreamIntake(chatBox, System.out)));
-		sidePanel.add(chatBox);
+        sidePanel = new JPanel();
+        sidePanel.setLayout(new GridLayout(3, 0, 0, 3)); 
+        sidePanel.add(timerPanel);
+        sidePanel.add(chatbox); // Thêm ChatBox vào sidePanel
+
+        PreviousMove previousMove = new PreviousMove(core);
+		System.setOut(new PrintStream(new StreamIntake(previousMove, System.out)));
+		sidePanel.add(previousMove);
 		add(sidePanel, BorderLayout.EAST);
 
 		ActionListener saveHandler = new ActionListener() {
@@ -70,4 +76,3 @@ public class BoardFrame extends JFrame {
 		}); // end call to addMouseListener
 	}
 }
-

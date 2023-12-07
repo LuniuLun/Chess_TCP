@@ -15,9 +15,10 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.border.EmptyBorder;
-import Run.server.GameLogic.Move;
 import javax.swing.JTextArea;
+import javax.swing.border.EmptyBorder;
+
+import GameLogic.Move;
 
 public class Server extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -55,7 +56,7 @@ public class Server extends JFrame {
 
     private void initServer() {
         try (ServerSocket serverSocket = new ServerSocket(6969)) {
-            textArea.append("Server is started!!!");
+            textArea.append("Server is started!!!" + "\n");
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 textArea.append("Client connected: " + clientSocket + "\n");
@@ -109,14 +110,15 @@ public class Server extends JFrame {
             try {
                 while (true) {
                     boolean isString = dis.readBoolean();
+                    System.out.println(isString);
                     if (isString) {
                         // Read a text-based message
                         String receivedMessage = dis.readUTF();
-                        textArea.append("Received message from client having port " +
-                                clientSocket.getPort() + ": " + receivedMessage + "\n");
 
                         // Check if it's a specific text message
                         if (receivedMessage.equals("CreateRound")) {
+                            textArea.append("Received message from client having port " +
+                                    clientSocket.getPort() + ": " + receivedMessage + "\n");
                             for (Game game : games) {
                                 if (game.getPlayer1().clientSocket.getPort() == clientSocket.getPort()
                                         || game.getPlayer2().clientSocket.getPort() == clientSocket.getPort()) {
@@ -128,6 +130,19 @@ public class Server extends JFrame {
                                 }
                             }
 
+                        } else {
+                            String sendedMessage = "PlayerPort" + clientSocket.getPort() + ": " +
+                                    receivedMessage;
+                            for (Game game : games) {
+                                if (game.getPlayer1().clientSocket.getPort() == clientSocket.getPort()) {
+                                    game.getPlayer2().sendMessage(sendedMessage);
+                                    break;
+                                }
+                                if (game.getPlayer2().clientSocket.getPort() == clientSocket.getPort()) {
+                                    game.getPlayer1().sendMessage(sendedMessage);
+                                    break;
+                                }
+                            }
                         }
                     } else {
                         // Đọc kích thước dữ liệu từ DataInputStream
@@ -169,6 +184,7 @@ public class Server extends JFrame {
 
         public void sendMessage(String message) {
             try {
+                dos.writeBoolean(true);//xac dinh truyen di 1 string
                 dos.writeUTF(message);
                 dos.flush();
             } catch (IOException e) {
@@ -182,6 +198,8 @@ public class Server extends JFrame {
                 objectOutputStream.writeObject(move);
                 byte[] data = byteArrayOutputStream.toByteArray();
 
+                dos.writeBoolean(false);// xac dinh truyen di 1 object
+                        System.out.println("gui false");
                 dos.writeInt(data.length); // Ghi kích thước dữ liệu vào DataOutputStream
                 dos.write(data); // Ghi dữ liệu vào DataOutputStream
 

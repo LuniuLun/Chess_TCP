@@ -1,9 +1,11 @@
 package GUI;
 
 import Run.Core;
-import Run.server.GameLogic.Move;
 
 import javax.swing.*;
+
+import GameLogic.Move;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,7 +41,8 @@ public class StartFrame extends JFrame {
     private Socket socket;
     private DataInputStream dis;
     private DataOutputStream dos;
-
+    private boolean gameCreated = false; // Thêm biến boolean
+    private ChatBox chatBox; // Add a ChatBox field
     public StartFrame(Core core) {
         super("Start Menu");
         this.setLayout(new GridLayout(4, 0));
@@ -226,46 +229,52 @@ public class StartFrame extends JFrame {
         setVisible(true);
     }
 
-    private boolean gameCreated = false; // Thêm biến boolean
-
     private void connectToServer(Core core) {
         try {
             socket = new Socket("localhost", 6969);
             dis = new DataInputStream(socket.getInputStream());
             dos = new DataOutputStream(socket.getOutputStream());
+            chatBox = new ChatBox(socket);
             sendStartGameRequest(profile);
-            System.out.println("gui yeu cau ket noi");
+            System.out.println("Gui yeu cau ket noi");
             while (!gameCreated) { // Sửa đổi điều kiện vòng lặp
-                String messageResponse = dis.readUTF();
-                System.out.println(messageResponse);
-                if (messageResponse.equals("UP")) {
-                    createBoard(core, "UP");
-                } else if (messageResponse.equals("DOWN")) {
-                    createBoard(core, "DOWN");
+                Boolean isString = dis.readBoolean();
+                if (isString) {
+                    String messageResponse = dis.readUTF();
+                    System.out.println(messageResponse);
+                    if (messageResponse.equals("UP")) {
+                        createBoard(core, "UP");
+                    } else if (messageResponse.equals("DOWN")) {
+                        createBoard(core, "DOWN");
+                    }
+                    gameCreated = true;
                 }
-                gameCreated = true;
             }
 
             Thread receiveThread = new Thread(new Runnable() {
                 public void run() {
                     while (true) {
                         try {
-                            int dataSize = dis.readInt();
-                            byte[] data = new byte[dataSize];
-                            dis.readFully(data); // Đọc dữ liệu từ DataInputStream vào mảng byte data
-                            try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
-                                    ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream)) {
-                                Move move = (Move) objectInputStream.readObject();
-                                Move reciveMove = new Move(8 - move.getOriginX(), 9 - move.getOriginY(),
-                                        8 - move.getFinalX(), 9 - move.getFinalY());
-                                core.playMove(reciveMove);
-                                System.out.println("da nhan duoc move tu server va di chuyen " + reciveMove.toString());
-                            } catch (ClassNotFoundException e) {
-                                e.printStackTrace();
+                            boolean isString = dis.readBoolean();
+                            if (isString == false) {
+                                int dataSize = dis.readInt();
+                                byte[] data = new byte[dataSize];
+                                dis.readFully(data); // Đọc dữ liệu từ DataInputStream vào mảng byte data
+                                try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(data);
+                                        ObjectInputStream objectInputStream = new ObjectInputStream(
+                                                byteArrayInputStream)) {
+                                    Move move = (Move) objectInputStream.readObject();
+                                    Move reciveMove = new Move(8 - move.getOriginX(), 9 - move.getOriginY(),
+                                            8 - move.getFinalX(), 9 - move.getFinalY());
+                                    core.playMove(reciveMove);
+                                } catch (ClassNotFoundException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                String message = dis.readUTF();
+                                showReceivedMessage(message);
                             }
                         } catch (IOException e) {
-                            // If it's not an object-based message, handle as necessary
-                            // You can choose to ignore or log this exception
                             e.printStackTrace();
                         }
                     }
@@ -290,25 +299,16 @@ public class StartFrame extends JFrame {
         boardFrame = core.getBoardFrame();
         // core.getBoardPanel().setProfile(profile);
         boardFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        boardFrame.setSize(900, 700);
+        boardFrame.setSize(900, 800);
         boardFrame.setVisible(true);
         setVisible(false);
-    }
-
-    private void sendMessage(String str) {
-        try {
-            dos.writeUTF(str);
-            dos.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     // Add this method to send a start game request to the server
     public void sendStartGameRequest(Profile profile) {
         try {
             DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-            dos.writeBoolean(true); 
+            dos.writeBoolean(true);
             dos.writeUTF("CreateRound"); // or any other suitable message
             dos.flush();
         } catch (IOException e) {
@@ -318,6 +318,10 @@ public class StartFrame extends JFrame {
 
     private void chooseProfile() {
         this.profile = themes[profileSelector.getSelectedIndex()];
+    }
+
+    public void showReceivedMessage(String message) {
+        chatBox.displayMessage(message);
     }
 
     // Preview Panel inner class

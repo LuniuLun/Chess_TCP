@@ -1,9 +1,11 @@
 package GUI;
 
 import Run.Core;
-import Run.server.GameLogic.*;
 
 import javax.swing.*;
+
+import GameLogic.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

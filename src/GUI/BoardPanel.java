@@ -1,18 +1,19 @@
 package GUI;
 
 import Run.Core;
-import Run.server.GameLogic.Board;
-import Run.server.GameLogic.Move;
-import Run.server.GameLogic.Point;
-import Run.server.GameLogic.Pieces.Piece;
 
 import javax.swing.*;
+
+import GameLogic.Board;
+import GameLogic.Move;
+import GameLogic.Point;
+import GameLogic.Pieces.Piece;
+
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -28,7 +29,7 @@ public class BoardPanel extends JPanel {
 	private boolean pressed = false, pressIsValid = false;
 	private Core core;
 	private Profile profile;
-	private DataInputStream dis;
+	// private DataInputStream dis;
 	private DataOutputStream dos;
 
 	/**
@@ -41,7 +42,7 @@ public class BoardPanel extends JPanel {
 	public BoardPanel(Core core, Socket socket, String direction) throws IOException {
 		// setSize(500, 500);
 		// board = new Board();
-		dis = new DataInputStream(socket.getInputStream());
+		// dis = new DataInputStream(socket.getInputStream());
 		dos = new DataOutputStream(socket.getOutputStream());
 		this.core = core;
 		this.board = core.getBoard();
@@ -363,8 +364,7 @@ public class BoardPanel extends JPanel {
 				dos.writeInt(data.length); // Ghi kích thước dữ liệu vào DataOutputStream
 				dos.write(data); // Ghi dữ liệu vào DataOutputStream
 
-				dos.flush(); // Đảm bảo dữ liệu được gửi đi
-				System.out.println("Da gui move den server");
+				dos.flush(); 
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

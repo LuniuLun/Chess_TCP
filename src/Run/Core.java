@@ -1,11 +1,11 @@
 package Run;
 
 import GUI.*;
-import Run.server.GameLogic.Board;
-import Run.server.GameLogic.Move;
-import Run.server.GameLogic.MoveLogger;
-import Run.server.GameLogic.Player;
-import Run.server.GameLogic.Pieces.Piece;
+import GameLogic.Board;
+import GameLogic.Move;
+import GameLogic.MoveLogger;
+import GameLogic.Player;
+import GameLogic.Pieces.Piece;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -46,7 +46,7 @@ public class Core {
         boardPanel = new BoardPanel(this, socket, direction);
         boardMenu = new BoardMenu(this);
         timerPanel = new TurnTimerPanel(player1, player2, profile, direction);
-        boardFrame = new BoardFrame(this);
+        boardFrame = new BoardFrame(this, socket);
         counter = 0;
         player1.startTurnTimer(timerPanel);
     }

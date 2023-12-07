@@ -1,0 +1,46 @@
+package GUI;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+public class ChatBox extends JPanel {
+    private JTextArea textArea;
+    private JTextField textField;
+
+    public ChatBox() {
+
+        textField = new JTextField();
+        add(textField);
+        textField.setColumns(5);
+
+        JButton sendButton = new JButton("Send");
+        add(sendButton);
+
+        textArea = new JTextArea();
+        textArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        add(scrollPane);
+
+        // Khi người dùng nhấn nút "Send", bạn có thể thực hiện hành động tương ứng
+        sendButton.addActionListener(e -> sendMessage());
+    }
+
+    private void sendMessage() {
+        // Đưa logic gửi tin nhắn vào đây
+        String message = textField.getText();
+        displayMessage("Toi: " + message);
+
+        // Có thể gọi các phương thức khác để xử lý việc gửi tin nhắn đến server hoặc nơi khác
+        // Ví dụ: sendToServer(message);
+
+        // Sau khi gửi, có thể xóa nội dung trong textField
+        textField.setText("");
+    }
+
+    public void displayMessage(String message) {
+        textArea.append(message + "\n");
+    }
+}

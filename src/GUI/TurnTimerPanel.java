@@ -3,8 +3,8 @@ package GUI;
 import javax.swing.*;
 import javax.swing.border.Border;
 
-import Run.server.GameLogic.Player;
-import Run.server.GameLogic.Pieces.Piece;
+import GameLogic.Player;
+import GameLogic.Pieces.Piece;
 
 import java.awt.*;
 

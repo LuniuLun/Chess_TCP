@@ -1,0 +1,34 @@
+package GUI;
+
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.JTextArea;
+import javax.swing.JButton;
+
+public class ChatBox extends JPanel {
+
+	private static final long serialVersionUID = 1L;
+	private JTextField textField;
+
+	/**
+	 * Create the panel.
+	 */
+	public ChatBox() {
+		setLayout(null);
+		
+		textField = new JTextField();
+		textField.setBounds(10, 255, 303, 35);
+		add(textField);
+		textField.setColumns(10);
+		
+		JTextArea textArea = new JTextArea();
+		textArea.setBounds(10, 10, 408, 235);
+		add(textArea);
+		
+		JButton btnNewButton = new JButton("New button");
+		btnNewButton.setBounds(323, 255, 95, 35);
+		add(btnNewButton);
+
+	}
+
+}

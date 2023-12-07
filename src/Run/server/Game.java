@@ -34,7 +34,6 @@ public class Game {
     public void addPlayer(ClientHandler player) {
         if (player1 == null) {
             setPlayer1(player);
-            System.out.println("da them va player1");
         } else if (player2 == null) {
             setPlayer2(player);
         }

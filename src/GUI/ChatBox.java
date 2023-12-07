@@ -1,67 +1,86 @@
 package GUI;
 
-import Run.Core;
-import Run.server.GameLogic.Board;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.JTextArea;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.net.Socket;
 
-class ChatBox extends JPanel {
-    //    private JLabel systemOutput;
-    private JTextArea systemOutput;
+import javax.swing.JButton;
 
-    public ChatBox(Core core) {
-        JLabel title = new JLabel("Chat Log");
-        systemOutput = new JTextArea(14, 18);
-        JScrollPane scrollPane = new JScrollPane(systemOutput, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        add(title, BorderLayout.NORTH);
-        add(scrollPane, BorderLayout.CENTER);
-        systemOutput.setCaretPosition(systemOutput.getDocument().getLength());
-        setPreferredSize(new Dimension(220, 400));
+public class ChatBox extends JPanel {
 
+	private static final long serialVersionUID = 1L;
+	private JTextField textField;
+	private JTextArea textArea;
 
-        //setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
-        JButton endGameBtn = new JButton("End Game");
-        endGameBtn.addActionListener(new ActionListener() {
-            //calls an end to the game by setting the game as a stalemate
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Board.setWinner(0);
-                core.callEnd();
-            }
-        });
-        add(endGameBtn, BorderLayout.SOUTH);
-    }
-    public void appendText(final String text) {
-        systemOutput.setText(systemOutput.getText() + text);
-    }
-}
+	private Socket socket;
+	private DataInputStream dis;
+	private DataOutputStream dos;
 
-class StreamIntake extends OutputStream {
+	/**
+	 * Create the panel.
+	 * 
+	 * @throws IOException
+	 */
+	public ChatBox(Socket socket) throws IOException {
+		this.socket = socket;
+		this.dis = new DataInputStream(socket.getInputStream());
+		this.dos = new DataOutputStream(socket.getOutputStream());
+		setLayout(null);
 
-    private String string = "";
-    private ChatBox chat;
-    private PrintStream system;
+		textField = new JTextField();
+		textField.setBounds(10, 154, 149, 25);
+		add(textField);
+		textField.setColumns(10);
 
-    public StreamIntake(ChatBox chat, PrintStream system) {
-        this.system = system;
-        this.chat = chat;
-    }
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setBounds(10, 10, 244, 134);
+        add(scrollPane);
 
-    @Override
-    public void write(int b) throws IOException {
-        char c = (char) b;
-        String value = Character.toString(c);
-        string += value;
-        if (value.equals("\n")) {
-            chat.appendText(string);
-            string = "";
-        }
-        system.print(c);
-    }
+        textArea = new JTextArea();
+        // Set the JTextArea as non-editable
+        textArea.setEditable(false);
+        // Add the JTextArea to the JScrollPane
+        scrollPane.setViewportView(textArea);
+
+		JButton btnNewButton = new JButton("Send");
+		btnNewButton.setBounds(169, 154, 85, 25);
+		add(btnNewButton);
+		btnNewButton.addActionListener((ActionListener) new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				displayMessage("Toi: " + textField.getText());
+				sendMessage();
+			}
+		});
+
+		// createReceivedMessageThread();
+		this.setVisible(true);
+	}
+
+	private void sendMessage() {
+		String mess = textField.getText();
+		try {
+			dos.writeBoolean(true);
+			dos.writeUTF(mess);
+			dos.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		textField.setText("");
+	}
+
+	void displayMessage(String message) {
+		System.out.println(message);
+		textArea.append(message + "\n");
+	}
+
 }
