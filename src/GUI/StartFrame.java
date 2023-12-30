@@ -253,15 +253,16 @@ public class StartFrame extends JFrame {
             dos = new DataOutputStream(socket.getOutputStream());
             sendStartGameRequest(profile);
             System.out.println("Gui yeu cau ket noi");
+            Integer port = dis.readInt();
             while (!gameCreated) { // Sửa đổi điều kiện vòng lặp
                 Boolean isString = dis.readBoolean();
                 if (isString) {
                     String messageResponse = dis.readUTF();
                     System.out.println(messageResponse);
                     if (messageResponse.equals("UP")) {
-                        createBoard(core, "UP");
+                        createBoard(core, "UP", port);
                     } else if (messageResponse.equals("DOWN")) {
-                        createBoard(core, "DOWN");
+                        createBoard(core, "DOWN", port);
                     }
                     gameCreated = true;
                 }
@@ -288,17 +289,7 @@ public class StartFrame extends JFrame {
                                 }
                             } else {
                                 String message = dis.readUTF();
-                                if (message.equals("Response_audio")) {
-                                //     try {
-                                //         int audioDataSize = dis.readInt();
-                                //         byte[] audioData = new byte[audioDataSize];
-                                //         dis.readFully(audioData);
-                                //         playAudio(audioData);
-                                //     } catch (IOException e) {
-                                //         e.printStackTrace();
-                                //     }
-                                }
-                                else core.getChatBox().displayMessage(message);
+                                core.getChatBox().displayMessage(message);
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -315,30 +306,11 @@ public class StartFrame extends JFrame {
         }
     }
 
-    private void playAudio(byte[] audioData) {
-        try {
-            AudioFormat format = getAudioFormat();
-            DataLine.Info info_out = new DataLine.Info(SourceDataLine.class, format);
-            if (!AudioSystem.isLineSupported(info_out)) {
-                System.out.println("not support");
-                System.exit(0);
-            }
-            audio_out = (SourceDataLine) AudioSystem.getLine(info_out);
-            audio_out.open(format);
-            audio_out.start();
-            audio_out.write(audioData, 0, audioData.length);
-            audio_out.drain();
-            audio_out.close();
-        } catch (LineUnavailableException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void createBoard(Core core, String direction) throws IOException {
+    private void createBoard(Core core, String direction, int port) throws IOException {
         profile.setMinutes((int) minutes.getValue());
         profile.setP1String(p1Name.getText());
         profile.setP2String("Competitor");
-        core.start(profile, direction, socket);
+        core.start(profile, direction, socket, port);
 
         // core.getBoardPanel().setProfile(profile);
         boardFrame = core.getBoardFrame();

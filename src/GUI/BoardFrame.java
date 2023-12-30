@@ -17,19 +17,20 @@ public class BoardFrame extends JFrame {
 	private TurnTimerPanel timerPanel;
 	private JPanel sidePanel;
 	private ChatBox chatbox;
-	public BoardFrame(Core core, ChatBox existingChatBox, Socket socket) throws IOException {
+	private VoiceChat voiceChat;
+	public BoardFrame(Core core, ChatBox existingChatBox, VoiceChat voiceChat, Socket socket) throws IOException {
         super("Chinese Chess");
         board = core.getBoardPanel();
         timerPanel = core.getTurnTimerPanel();
-        chatbox = existingChatBox; // Khởi tạo ChatBox
+
 		// chatbox = new ChatBox(socket);
         add(board, BorderLayout.CENTER);
 
         sidePanel = new JPanel();
-        sidePanel.setLayout(new GridLayout(3, 0, 0, 3)); 
+        sidePanel.setLayout(new GridLayout(4, 0, 0, 3)); 
         sidePanel.add(timerPanel);
-        sidePanel.add(chatbox); // Thêm ChatBox vào sidePanel
-
+        sidePanel.add(existingChatBox); // Thêm ChatBox vào sidePanel
+		sidePanel.add(voiceChat);
         PreviousMove previousMove = new PreviousMove(core, socket);
 		System.setOut(new PrintStream(new StreamIntake(previousMove, System.out)));
 		sidePanel.add(previousMove);

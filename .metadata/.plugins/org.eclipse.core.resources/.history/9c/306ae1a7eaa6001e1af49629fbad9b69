@@ -1,0 +1,35 @@
+package GUI;
+
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+public class VoiceChat extends JPanel {
+
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * Create the panel.
+	 */
+	public VoiceChat() {
+		setLayout(null);
+		
+		JButton btn_OnMIc = new JButton("On Mic");
+		btn_OnMIc.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btn_OnMIc.setBounds(10, 10, 85, 21);
+		add(btn_OnMIc);
+		
+		JButton btn_OnVolume = new JButton("On Volume");
+		btn_OnVolume.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btn_OnVolume.setBounds(125, 10, 113, 21);
+		add(btn_OnVolume);
+
+	}
+}

@@ -1,0 +1,16 @@
+package GUI;
+
+import javax.swing.JPanel;
+
+public class VoiceChat extends JPanel {
+
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * Create the panel.
+	 */
+	public VoiceChat() {
+
+	}
+
+}

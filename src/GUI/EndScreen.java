@@ -9,6 +9,8 @@ import GameLogic.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 
 public class EndScreen extends JFrame {
@@ -18,15 +20,18 @@ public class EndScreen extends JFrame {
     private Core core;
     private JPanel buttonPanel;
 
-    public EndScreen(Core core, int winner, Profile profile) {
+    private DataOutputStream dos;
+
+    public EndScreen(Core core, int winner, Profile profile, Socket socket) throws IOException {
         this.core = core;
-        setSize(new Dimension(450,200));
+        this.dos = new DataOutputStream(socket.getOutputStream());
+        setSize(new Dimension(450, 200));
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+        this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
 
         setLayout(new GridLayout(2, 0));
-        //setPreferredSize(new Dimension(300,200));
-        //JFrame popUp = new JFrame();
+        // setPreferredSize(new Dimension(300,200));
+        // JFrame popUp = new JFrame();
 
         switch (winner) {
             case Board.NA:
@@ -51,12 +56,12 @@ public class EndScreen extends JFrame {
                 message = "Test Message";
         }
 
-        //JOptionPane.showMessageDialog(popup, message);
+        // JOptionPane.showMessageDialog(popup, message);
         JLabel winMessage = new JLabel(message, SwingConstants.CENTER);
         winMessage.setFont(new Font(winMessage.getFont().getName(), Font.BOLD, 14));
 
         buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(1,3));
+        buttonPanel.setLayout(new GridLayout(1, 3));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 40, 40, 40));
 
         exitBtn = new JButton("Exit Game");
@@ -64,6 +69,14 @@ public class EndScreen extends JFrame {
             // terminate application when user clicks exit game
             @Override
             public void actionPerformed(ActionEvent e) {
+                try {
+                    dos.writeBoolean(true);
+                    dos.writeUTF("Your competitor is out room");
+                    dos.flush();
+                } catch (IOException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
                 System.exit(0);
 
             }
@@ -73,6 +86,14 @@ public class EndScreen extends JFrame {
             // restarts game when user clicks restart game
             @Override
             public void actionPerformed(ActionEvent e) {
+                try {
+                    dos.writeBoolean(true);
+                    dos.writeUTF("Your competitor is out room");
+                    dos.flush();
+                } catch (IOException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
                 core.setInvisible();
                 Core newCore = new Core();
                 setVisible(false);

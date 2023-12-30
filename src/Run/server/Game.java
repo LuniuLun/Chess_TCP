@@ -3,13 +3,15 @@ package Run.server;
 import Run.server.Server.ClientHandler;
 
 public class Game {
-    private ClientHandler player1;
-    private ClientHandler player2;
+    public ClientHandler player1;
+    public ClientHandler player2;
 
     public Game() {
         this.player1 = null;
         this.player2 = null;
     }
+
+
 
     public ClientHandler getPlayer1() {
         return player1;

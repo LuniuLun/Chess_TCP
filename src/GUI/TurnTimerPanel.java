@@ -7,6 +7,7 @@ import GameLogic.Player;
 import GameLogic.Pieces.Piece;
 
 import java.awt.*;
+import java.io.IOException;
 
 public class TurnTimerPanel extends JPanel {
 
@@ -32,7 +33,7 @@ public class TurnTimerPanel extends JPanel {
 
     private int timeLimit;
 
-    public TurnTimerPanel(Player player1, Player player2, Profile profile, String direction) {
+    public TurnTimerPanel(Player player1, Player player2, Profile profile, String direction) throws IOException {
 
         if (player1.getPlayerSide() == Piece.Side.DOWN) { // Player1 is red
             this.redPlayer = player1;
@@ -108,7 +109,12 @@ public class TurnTimerPanel extends JPanel {
         newThread = new Thread(() -> {
             while (redPlayer.isTimerRunning()) {
 
-                redTimerLabel.setText(redPlayer.elapsedTimeToString(timeLimit));
+                try {
+                    redTimerLabel.setText(redPlayer.elapsedTimeToString(timeLimit));
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -125,7 +131,12 @@ public class TurnTimerPanel extends JPanel {
         // Restart thread by creating a new one since you can't restart dead thread.
         newThread = new Thread(() -> {
             while (blackPlayer.isTimerRunning()) {
-                blackTimerLabel.setText(blackPlayer.elapsedTimeToString(timeLimit));
+                try {
+                    blackTimerLabel.setText(blackPlayer.elapsedTimeToString(timeLimit));
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         });
 

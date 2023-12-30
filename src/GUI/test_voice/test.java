@@ -21,7 +21,6 @@ import java.net.UnknownHostException;
 import java.awt.event.ActionEvent;
 
 public class test extends JFrame {
-
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 
@@ -74,7 +73,6 @@ public class test extends JFrame {
 		r.start();
 		btn_start.setVisible(false);
 		btn_stop.setVisible(true);
-
 	}
 	/**
 	 * Create the frame.

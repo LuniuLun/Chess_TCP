@@ -28,13 +28,15 @@ public class Core {
     private EndScreen endScreen;
     private Profile profile;
     private ChatBox chatbox;
-
+    private VoiceChat voiceChat;
+    public Socket socket;
     public Core() {
         startFrame = new StartFrame(this);
     }
 
-    public void start(Profile profile, String direction, Socket socket) throws IOException {
+    public void start(Profile profile, String direction, Socket socket, int port) throws IOException {
         this.profile = profile;
+        this.socket = socket;
         if (direction.equals("UP")) {
             player1 = new Player(1, profile.getP1String(), Piece.Side.UP, direction, this);
             player2 = new Player(2, profile.getP2String(), Piece.Side.DOWN, direction, this);
@@ -48,15 +50,17 @@ public class Core {
         boardMenu = new BoardMenu(this);
         timerPanel = new TurnTimerPanel(player1, player2, profile, direction);
         chatbox = new ChatBox(socket);
-        boardFrame = new BoardFrame(this, chatbox, socket);
-    
+        voiceChat = new VoiceChat(port);
+        boardFrame = new BoardFrame(this, chatbox, voiceChat, socket);
+
         // Initialize and set the chatbox visible
+        voiceChat.setVisible(true);
         chatbox.setVisible(true);
         counter = 0;
         player1.startTurnTimer(timerPanel);
     }
 
-    public void playMove(Move move) {
+    public void playMove(Move move) throws IOException {
         // System.out.println(counter);
 
         if (counter % 2 == 0) {
@@ -87,11 +91,12 @@ public class Core {
 
     /**
      * Calls an end to the game and opens the endScreen.
+     * @throws IOException
      */
-    public void callEnd() {
+    public void callEnd() throws IOException {
         player1.stopTurnTimer();
         player2.stopTurnTimer();
-        endScreen = new EndScreen(this, board.getWinner(), profile);
+        endScreen = new EndScreen(this, board.getWinner(), profile, socket);
 
     }
 
@@ -152,6 +157,7 @@ public class Core {
     public Profile getProfile() {
         return this.profile;
     }
+
     public ChatBox getChatBox() {
         return this.chatbox;
     }

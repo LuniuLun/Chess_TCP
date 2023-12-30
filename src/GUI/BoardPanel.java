@@ -354,7 +354,7 @@ public class BoardPanel extends JPanel {
 		 * 
 		 * @throws IOException
 		 */
-		void sendMove(Move move) {
+		void sendMove(Move move) throws IOException {
 			core.playMove(move);
 			try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 					ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {

@@ -7,6 +7,7 @@ import GUI.TurnTimerPanel;
 import GameLogic.Pieces.*;
 import Run.Core;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 // import java.util.Scanner;
@@ -182,7 +183,7 @@ public class Player {
 
     }
 
-    public String elapsedTimeToString(int timeLimit) {
+    public String elapsedTimeToString(int timeLimit) throws IOException {
 
         // convert the timeLimit (min) to milliseconds
         timeLimit = timeLimit * 60000;

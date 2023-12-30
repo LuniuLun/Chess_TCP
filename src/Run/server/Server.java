@@ -20,6 +20,7 @@ import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
 import GameLogic.Move;
+import Run.server.server_voice.server_fr;
 
 public class Server extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -31,8 +32,12 @@ public class Server extends JFrame {
     int countGameRoom = 0;
 
     public static void main(String[] args) {
+        server_fr server_voice = new server_fr();
+        server_voice.setVisible(true);
+
         Server frame = new Server();
-        frame.setVisible(true);
+        frame.initServer(); // Rename your initServer method to avoid confusion
+
     }
 
     public Server() {
@@ -91,8 +96,8 @@ public class Server extends JFrame {
         }
     }
 
-    class ClientHandler implements Runnable {
-        private Socket clientSocket;
+    public class ClientHandler implements Runnable {
+        public Socket clientSocket;
         private DataInputStream dis;
         private DataOutputStream dos;
 
@@ -109,6 +114,8 @@ public class Server extends JFrame {
         @Override
         public void run() {
             try {
+                dos.writeInt(clientSocket.getPort());
+                dos.flush();
                 while (true) {
                     boolean isString = dis.readBoolean();
                     System.out.println(isString);
@@ -130,21 +137,6 @@ public class Server extends JFrame {
                                     break;
                                 }
                             }
-                        } else if (receivedMessage.equals("Request_audio")) {
-                            // Trong phương thức run() của server
-                            // byte[] audioData = new byte[512];
-                            // while (true) {
-                            //     for (Game game : games) {
-                            //         if (game.getPlayer1().clientSocket.getPort() == clientSocket.getPort()) {
-                            //             game.getPlayer2().sendAudio(audioData);
-                            //             break;
-                            //         }
-                            //         if (game.getPlayer2().clientSocket.getPort() == clientSocket.getPort()) {
-                            //             game.getPlayer1().sendAudio(audioData);
-                            //             break;
-                            //         }
-                            //     }
-                            // }
                         } else {
                             String sendedMessage = "PlayerPort" + clientSocket.getPort() + ": " +
                                     receivedMessage;
@@ -226,15 +218,18 @@ public class Server extends JFrame {
         public void sendAudio(byte[] audioData) {
             try {
                 dos.writeBoolean(true);
-                dos.writeUTF("Response_audio"); 
+                dos.writeUTF("Response_audio");
                 dos.writeInt(audioData.length); // Ghi kích thước dữ liệu vào DataOutputStream
                 dos.write(audioData, 0, audioData.length); // Ghi dữ liệu vào DataOutputStream
-        
+
                 dos.flush(); // Đảm bảo dữ liệu được gửi đi
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        
+    }
+
+    public static List<Game> getGames() {
+        return games;
     }
 }

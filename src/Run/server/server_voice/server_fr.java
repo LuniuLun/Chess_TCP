@@ -10,17 +10,20 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
+
+import Run.server.Server;
+
 import javax.swing.JButton;
 import javax.sound.sampled.SourceDataLine;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class server_fr extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	JButton btn_start;
+	static JTextArea textArea;
 
 	public int port = 8888;
 
@@ -32,6 +35,7 @@ public class server_fr extends JFrame {
 		Boolean bigEndian = false;
 		return new AudioFormat(sampleRate, sampleSizeInbits, channel, signed, bigEndian);
 	}
+
 	public SourceDataLine audio_out;
 
 	/**
@@ -49,10 +53,11 @@ public class server_fr extends JFrame {
 			}
 		});
 	}
-	public void init_audio() throws LineUnavailableException, SocketException {
+
+	public void init_server() throws LineUnavailableException, SocketException {
 		AudioFormat format = getAudioFormat();
 		DataLine.Info info_out = new DataLine.Info(SourceDataLine.class, format);
-		if(!AudioSystem.isLineSupported(info_out)) {
+		if (!AudioSystem.isLineSupported(info_out)) {
 			System.out.println("not support");
 			System.exit(0);
 		}
@@ -60,12 +65,15 @@ public class server_fr extends JFrame {
 		audio_out.open(format);
 		audio_out.start();
 		player_thread p = new player_thread();
-		p.din = new DatagramSocket(port);
+		p.setGames(Server.getGames());
+		p.serverSocket = new DatagramSocket(port);
 		p.audio_out = audio_out;
 		server_voice.calling = true;
 		p.start();
-		btn_start.setEnabled(false);
+
+		// btn_start.setEnabled(false);
 	}
+
 	/**
 	 * Create the frame.
 	 */
@@ -77,20 +85,17 @@ public class server_fr extends JFrame {
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
-		btn_start = new JButton("Start");
-		btn_start.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					init_audio();
-				} catch (SocketException | LineUnavailableException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
-		btn_start.setBounds(175, 172, 85, 21);
-		contentPane.add(btn_start);
+		textArea = new JTextArea();
+		textArea.setBounds(10, 10, 416, 152);
+		contentPane.add(textArea);
+		try {
+			init_server();
+		} catch (SocketException | LineUnavailableException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-
+    public static void updateTextArea(String message) {
+        textArea.append(message + "\n");
+    }
 }

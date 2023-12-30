@@ -26,7 +26,7 @@ class PreviousMove extends JPanel {
         add(title, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         systemOutput.setCaretPosition(systemOutput.getDocument().getLength());
-        setPreferredSize(new Dimension(260, 200));
+        setPreferredSize(new Dimension(260, 150));
 
 
         //setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
@@ -36,7 +36,12 @@ class PreviousMove extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Board.setWinner(0);
-                core.callEnd();
+                try {
+                    core.callEnd();
+                } catch (IOException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
             }
         });
         add(endGameBtn, BorderLayout.SOUTH);
