@@ -363,7 +363,7 @@ public class BoardPanel extends JPanel {
 
 				dos.writeInt(data.length); // Ghi kích thước dữ liệu vào DataOutputStream
 				dos.write(data); // Ghi dữ liệu vào DataOutputStream
-
+				
 				dos.flush(); 
 			} catch (IOException e) {
 				e.printStackTrace();

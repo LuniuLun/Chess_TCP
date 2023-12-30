@@ -48,11 +48,10 @@ public class Core {
         boardMenu = new BoardMenu(this);
         timerPanel = new TurnTimerPanel(player1, player2, profile, direction);
         chatbox = new ChatBox(socket);
-        boardFrame = new BoardFrame(this, chatbox);
+        boardFrame = new BoardFrame(this, chatbox, socket);
     
         // Initialize and set the chatbox visible
         chatbox.setVisible(true);
-        if(chatbox == null) System.out.println("chưa tao duoc chatbox");
         counter = 0;
         player1.startTurnTimer(timerPanel);
     }

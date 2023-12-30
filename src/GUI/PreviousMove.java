@@ -12,12 +12,13 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.Socket;
 
 class PreviousMove extends JPanel {
     //    private JLabel systemOutput;
     private JTextArea systemOutput;
 
-    public PreviousMove(Core core) {
+    public PreviousMove(Core core, Socket socket) {
         JLabel title = new JLabel("Previous moves");
         systemOutput = new JTextArea(10, 20);
         systemOutput.setEditable(false);

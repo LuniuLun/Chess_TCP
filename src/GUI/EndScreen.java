@@ -29,7 +29,6 @@ public class EndScreen extends JFrame {
         //JFrame popUp = new JFrame();
 
         switch (winner) {
-
             case Board.NA:
                 message = "Test Message";
                 break;
@@ -66,6 +65,7 @@ public class EndScreen extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.exit(0);
+
             }
         });
         restartBtn = new JButton("Restart Game");

@@ -2,6 +2,11 @@ package GUI;
 
 import Run.Core;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
 import javax.swing.*;
 
 import GameLogic.Move;
@@ -16,6 +21,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.DatagramSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -42,6 +48,17 @@ public class StartFrame extends JFrame {
     private DataInputStream dis;
     private DataOutputStream dos;
     private boolean gameCreated = false; // Thêm biến boolean
+
+    public static AudioFormat getAudioFormat() {
+        Float sampleRate = 8000.0F;
+        Integer sampleSizeInbits = 16;
+        Integer channel = 2;
+        Boolean signed = true;
+        Boolean bigEndian = false;
+        return new AudioFormat(sampleRate, sampleSizeInbits, channel, signed, bigEndian);
+    }
+
+    public SourceDataLine audio_out;
 
     public StartFrame(Core core) {
         super("Start Menu");
@@ -271,9 +288,17 @@ public class StartFrame extends JFrame {
                                 }
                             } else {
                                 String message = dis.readUTF();
-                                // showReceivedMessage(message);
-                                // Hiển thị tin nhắn trên ChatBox
-                                core.getChatBox().displayMessage(message);
+                                if (message.equals("Response_audio")) {
+                                //     try {
+                                //         int audioDataSize = dis.readInt();
+                                //         byte[] audioData = new byte[audioDataSize];
+                                //         dis.readFully(audioData);
+                                //         playAudio(audioData);
+                                //     } catch (IOException e) {
+                                //         e.printStackTrace();
+                                //     }
+                                }
+                                else core.getChatBox().displayMessage(message);
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -289,6 +314,26 @@ public class StartFrame extends JFrame {
             e.printStackTrace();
         }
     }
+
+    private void playAudio(byte[] audioData) {
+        try {
+            AudioFormat format = getAudioFormat();
+            DataLine.Info info_out = new DataLine.Info(SourceDataLine.class, format);
+            if (!AudioSystem.isLineSupported(info_out)) {
+                System.out.println("not support");
+                System.exit(0);
+            }
+            audio_out = (SourceDataLine) AudioSystem.getLine(info_out);
+            audio_out.open(format);
+            audio_out.start();
+            audio_out.write(audioData, 0, audioData.length);
+            audio_out.drain();
+            audio_out.close();
+        } catch (LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void createBoard(Core core, String direction) throws IOException {
         profile.setMinutes((int) minutes.getValue());
         profile.setP1String(p1Name.getText());

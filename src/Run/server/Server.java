@@ -12,6 +12,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sound.sampled.AudioFormat;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -129,7 +130,21 @@ public class Server extends JFrame {
                                     break;
                                 }
                             }
-
+                        } else if (receivedMessage.equals("Request_audio")) {
+                            // Trong phương thức run() của server
+                            // byte[] audioData = new byte[512];
+                            // while (true) {
+                            //     for (Game game : games) {
+                            //         if (game.getPlayer1().clientSocket.getPort() == clientSocket.getPort()) {
+                            //             game.getPlayer2().sendAudio(audioData);
+                            //             break;
+                            //         }
+                            //         if (game.getPlayer2().clientSocket.getPort() == clientSocket.getPort()) {
+                            //             game.getPlayer1().sendAudio(audioData);
+                            //             break;
+                            //         }
+                            //     }
+                            // }
                         } else {
                             String sendedMessage = "PlayerPort" + clientSocket.getPort() + ": " +
                                     receivedMessage;
@@ -184,7 +199,7 @@ public class Server extends JFrame {
 
         public void sendMessage(String message) {
             try {
-                dos.writeBoolean(true);//xac dinh truyen di 1 string
+                dos.writeBoolean(true);// xac dinh truyen di 1 string
                 dos.writeUTF(message);
                 dos.flush();
             } catch (IOException e) {
@@ -208,5 +223,18 @@ public class Server extends JFrame {
             }
         }
 
+        public void sendAudio(byte[] audioData) {
+            try {
+                dos.writeBoolean(true);
+                dos.writeUTF("Response_audio"); 
+                dos.writeInt(audioData.length); // Ghi kích thước dữ liệu vào DataOutputStream
+                dos.write(audioData, 0, audioData.length); // Ghi dữ liệu vào DataOutputStream
+        
+                dos.flush(); // Đảm bảo dữ liệu được gửi đi
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        
     }
 }
