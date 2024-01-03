@@ -3,9 +3,6 @@ package GUI;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-
-import GUI.test_voice.test;
 
 import javax.swing.JTextArea;
 
@@ -14,35 +11,27 @@ import java.awt.event.ActionListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.TargetDataLine;
 import javax.swing.JButton;
 
 public class ChatBox extends JPanel {
-
-	private static final long serialVersionUID = 1L;
 	private JTextField textField;
 	public static boolean calling = false;
 	private Socket socket;
 	private DataInputStream dis;
 	private DataOutputStream dos;
 	private JTextArea textArea;
+	private JButton btnNewButton;
 
 	/**
 	 * Create the panel.
 	 * 
 	 * @throws IOException
 	 */
+	public JTextArea getTextArea() {
+		return textArea;
+	}
 
 	public ChatBox() {
 		// Initialize your components or perform any other necessary setup here
@@ -52,10 +41,9 @@ public class ChatBox extends JPanel {
 		this.socket = socket;
 		this.dis = new DataInputStream(socket.getInputStream());
 		this.dos = new DataOutputStream(socket.getOutputStream());
-		setLayout(null);
 
 		textField = new JTextField();
-		textField.setBounds(10, 154,143, 27);
+		textField.setBounds(10, 154, 143, 27);
 		add(textField);
 		textField.setColumns(10);
 
@@ -63,10 +51,10 @@ public class ChatBox extends JPanel {
 		scrollPane.setBounds(10, 10, 221, 134);
 		add(scrollPane);
 
-		textArea = new JTextArea();
 		scrollPane.setViewportView(textArea);
 
-		JButton btnNewButton = new JButton("Send");
+		btnNewButton = new JButton("Send");
+
 		btnNewButton.setBounds(157, 154, 74, 25);
 		add(btnNewButton);
 		btnNewButton.addActionListener((ActionListener) new ActionListener() {
@@ -78,6 +66,14 @@ public class ChatBox extends JPanel {
 				}
 			}
 		});
+
+		textArea = new JTextArea();
+		textArea.setBounds(37, 190, 143, 71);
+		textArea.setEnabled(false);
+		scrollPane.setViewportView(textArea);
+
+		// add(textArea);
+
 		// createReceivedMessageThread();
 		this.setVisible(true);
 	}

@@ -16,8 +16,7 @@ public class BoardFrame extends JFrame {
 	private BoardPanel board;
 	private TurnTimerPanel timerPanel;
 	private JPanel sidePanel;
-	private ChatBox chatbox;
-	private VoiceChat voiceChat;
+	private ChatBox existingChatBox;
 	public BoardFrame(Core core, ChatBox existingChatBox, VoiceChat voiceChat, Socket socket) throws IOException {
         super("Chinese Chess");
         board = core.getBoardPanel();
@@ -25,15 +24,43 @@ public class BoardFrame extends JFrame {
 
 		// chatbox = new ChatBox(socket);
         add(board, BorderLayout.CENTER);
-
+		
         sidePanel = new JPanel();
-        sidePanel.setLayout(new GridLayout(4, 0, 0, 3)); 
-        sidePanel.add(timerPanel);
-        sidePanel.add(existingChatBox); // Thêm ChatBox vào sidePanel
-		sidePanel.add(voiceChat);
+        sidePanel.setLayout(new GridBagLayout()); 
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridx = 0;
+
+		// Add timerPanel
+		gbc.gridy = 0;
+		gbc.weighty = 2.7;
+		gbc.fill = GridBagConstraints.BOTH;
+		sidePanel.add(timerPanel, gbc);
+
+		// Add existingChatBox
+		gbc.gridy = GridBagConstraints.RELATIVE;
+		gbc.weighty = 0.2;
+		sidePanel.add(existingChatBox, gbc);
+
+		JTextArea jarea = existingChatBox.getTextArea();
+		gbc.gridy = GridBagConstraints.RELATIVE;
+		gbc.weighty = 1.0;
+		sidePanel.add(jarea, gbc);
+
+		gbc.gridy = GridBagConstraints.RELATIVE;
+		gbc.weighty = 0.5;
+		sidePanel.add(voiceChat, gbc);
+        // sidePanel.add(timerPanel);
+        // sidePanel.add(existingChatBox); // Thêm ChatBox vào sidePanel
+		// sidePanel.add(voiceChat);
         PreviousMove previousMove = new PreviousMove(core, socket);
 		System.setOut(new PrintStream(new StreamIntake(previousMove, System.out)));
-		sidePanel.add(previousMove);
+
+
+		// sidePanel.add(previousMove, BorderLayout.SOUTH);
+		gbc.gridy = GridBagConstraints.RELATIVE;
+		gbc.weighty = 1.0;
+		sidePanel.add(previousMove, gbc);
+
 		add(sidePanel, BorderLayout.EAST);
 
 		ActionListener saveHandler = new ActionListener() {

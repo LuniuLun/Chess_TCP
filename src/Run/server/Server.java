@@ -36,7 +36,7 @@ public class Server extends JFrame {
         server_voice.setVisible(true);
 
         Server frame = new Server();
-        frame.initServer(); // Rename your initServer method to avoid confusion
+        frame.initServer(); 
 
     }
 
